@@ -1,6 +1,6 @@
-# Mouth
+# Mouth2
 
-Body service that handles outgoing communications like emails and sms messages.
+Body 2.0 service that handles outgoing communications like emails and sms messages.
 
 This code comes without documentation as it's not meant to be used by anyone
 outside of Ouroboros Coding Inc. Please see LICENSE for further information.
