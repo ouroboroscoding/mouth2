@@ -5,7 +5,7 @@ with open('README.md', 'r') as oF:
 
 setup(
 	name='mouth2-oc',
-	version='2.0.0',
+	version='2.0.1',
 	description='Mouth contains a service to run outgoing communications like email and sms messages',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
@@ -29,7 +29,7 @@ setup(
 		'define-oc>=1.0.1,<1.1',
 		'email-smtp>=1.0.1,<1.1',
 		'namedredis>=1.0.2,<1.1',
-		'rest_mysql>=1.0.0,<1.1',
+		'rest_mysql>=1.0.2,<1.1',
 		'tools-oc>=1.2.4,<1.3',
 		'twilio==9.4.1',
 		'undefined-oc>=1.0.0,<1.1'
