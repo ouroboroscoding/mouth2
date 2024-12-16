@@ -1071,7 +1071,7 @@ class Mouth(Service):
 		# Make sure the client has access via either an internal key, or via the
 		#	session
 		sUserID = access.internal_or_verify(
-			req, 'mouth_template', access.CREATE
+			req.session, 'mouth_template', access.CREATE
 		)
 
 		# If the name is missing
@@ -1108,7 +1108,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req, 'mouth_template', access.DELETE
+			req.session, 'mouth_template', access.DELETE
 		)
 
 		# If the ID is missing
@@ -1159,7 +1159,7 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req, 'mouth_template', access.READ)
+		access.internal_or_verify(req.session, 'mouth_template', access.READ)
 
 		# If the ID is missing
 		if '_id' not in req.data:
@@ -1275,7 +1275,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req, 'mouth_template', access.UPDATE
+			req.session, 'mouth_template', access.UPDATE
 		)
 
 		# Check for ID
@@ -1334,7 +1334,7 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req, 'mouth_content', access.READ)
+		access.internal_or_verify(req.session, 'mouth_content', access.READ)
 
 		# If 'template' is missing
 		if 'template' not in req.data:
@@ -1389,7 +1389,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID, iRet = access.internal_or_verify(
-			req, 'mouth_content', access.CREATE
+			req.session, 'mouth_content', access.CREATE
 		)
 
 		# Check minimum fields
@@ -1457,7 +1457,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID, iRet = access.internal_or_verify(
-			req, 'mouth_content', access.DELETE
+			req.session, 'mouth_content', access.DELETE
 		)
 
 		# If the ID is missing
@@ -1494,7 +1494,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID, iRet = access.internal_or_verify(
-			req, 'mouth_content', access.UPDATE
+			req.session, 'mouth_content', access.UPDATE
 		)
 
 		# If the ID is missing
@@ -1568,7 +1568,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req, 'mouth_content', access.READ
+			req.session, 'mouth_content', access.READ
 		)
 
 		# Check minimum fields
@@ -1619,7 +1619,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID = access.internal_or_verify(req, 'mouth_content', access.CREATE)
+		sUserID = access.internal_or_verify(
+			req.session, 'mouth_content', access.CREATE
+		)
 
 		# Check minimum fields
 		try: evaluate(req.data, ['template', 'locale'])
@@ -1685,7 +1687,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID, iRet = access.internal_or_verify(
-			req, 'mouth_content', access.DELETE
+			req.session, 'mouth_content', access.DELETE
 		)
 
 		# If the ID is missing
@@ -1721,7 +1723,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID, iRet = access.internal_or_verify(
-			req, 'mouth_content', access.UPDATE
+			req.session, 'mouth_content', access.UPDATE
 		)
 
 		# Check minimum fields
@@ -1780,7 +1782,7 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req, 'mouth_content', access.READ)
+		access.internal_or_verify(req.session, 'mouth_content', access.READ)
 
 		# Check minimum fields
 		try: evaluate(req.data, [ 'template', 'locale', 'content' ])
