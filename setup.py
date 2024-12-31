@@ -24,7 +24,7 @@ setup(
 	python_requires='>=3.10',
 	install_requires=[
 		'body-oc>=2.0.1,<2.1',
-		'brain2-oc>=2.0.0,<2.1',
+		'brain2-oc>=2.1.1,<2.2',
 		'config-oc>=1.1.0,<1.2',
 		'define-oc>=1.0.1,<1.1',
 		'email-smtp>=1.0.1,<1.1',
