@@ -61,11 +61,6 @@ def cli():
 		'passwd': ''
 	}))
 
-	# Set the timestamp timezone
-	Record_MySQL.timestamp_timezone(
-		config.mysql.timestamp_timezone('+00:00')
-	)
-
 	# If we have no arguments
 	if len(argv) == 1:
 
