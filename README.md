@@ -1,6 +1,12 @@
 # Mouth2
+[![pypi version](https://img.shields.io/pypi/v/mouth2-oc.svg)](https://pypi.org/project/mouth2-oc) ![MIT License](https://img.shields.io/pypi/l/mouth2-oc.svg)
 
-Body 2.0 service that handles outgoing communications like emails and sms messages.
+Body 2.0 service that handles outgoing communications like emails and sms
+messages.
 
-This code comes without documentation as it's not meant to be used by anyone
-outside of Ouroboros Coding Inc. Please see LICENSE for further information.
+Please see [LICENSE](https://github.com/ouroboroscoding/mouth2/blob/main/LICENSE)
+for further information.
+
+# Documentation
+
+[RESTful](https://github.com/ouroboroscoding/mouth2/blob/main/rest.md)

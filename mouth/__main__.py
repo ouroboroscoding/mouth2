@@ -43,12 +43,6 @@ def cli():
 		conf['data'] = expanduser(conf['data'])
 	conf['data'] = abspath(conf['data'])
 
-	# Get Mouth config
-	dConfig = config.mouth({
-		'mysql_host': 'mouth',
-		'verbose': False
-	})
-
 	# Add the global prepend
 	Record_MySQL.db_prepend(config.mysql.prepend(''))
 
