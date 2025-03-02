@@ -43,6 +43,12 @@ class Mouth(Service):
 	"""Mouth Service class
 
 	Service for outgoing communication
+
+	docs-file:
+		rest
+
+	docs-body:
+		mouth
 	"""
 
 	_special_conditionals = {
@@ -817,7 +823,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.verify(req.session, 'mouth_locale', access.CREATE)
+		access.verify(
+			req.session, { 'name': 'mouth_locale', 'right': access.CREATE }
+		)
 
 		# Verify the instance
 		try:
@@ -848,7 +856,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.verify(req.session, 'mouth_locale', access.DELETE)
+		access.verify(
+			req.session, { 'name': 'mouth_locale', 'right': access.DELETE }
+		)
 
 		# Make sure we have an ID
 		if '_id' not in req.data:
@@ -941,7 +951,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.verify(req.session, 'mouth_locale', access.READ)
+		access.verify(
+			req.session, { 'name': 'mouth_locale', 'right': access.READ }
+		)
 
 		# If we have data
 		if 'data' in req:
@@ -988,7 +1000,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.verify(req.session, 'mouth_locale', access.UPDATE)
+		access.verify(
+			req.session, { 'name': 'mouth_locale', 'right': access.UPDATE }
+		)
 
 		# Check minimum fields
 		try:
@@ -1071,7 +1085,7 @@ class Mouth(Service):
 		# Make sure the client has access via either an internal key, or via the
 		#	session
 		sUserID = access.internal_or_verify(
-			req.session, 'mouth_template', access.CREATE
+			req.session, { 'name': 'mouth_template', 'right': access.CREATE }
 		)
 
 		# If the name is missing
@@ -1086,7 +1100,7 @@ class Mouth(Service):
 
 		# If it's valid data, try to add it to the DB
 		try:
-			oTemplate.create(changes={'user': sUserID})
+			oTemplate.create(changes = { 'user': sUserID })
 		except DuplicateException as e:
 			return Error(errors.body.DB_DUPLICATE, 'template')
 
@@ -1108,7 +1122,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, 'mouth_template', access.DELETE
+			req.session, { 'name': 'mouth_template', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1130,7 +1144,7 @@ class Mouth(Service):
 		}):
 
 			# Delete it
-			o.delete(changes={'user': sUserID})
+			o.delete(changes = { 'user': sUserID })
 
 		# For each sms template associated
 		for o in TemplateSMS.filter({
@@ -1138,11 +1152,11 @@ class Mouth(Service):
 		}):
 
 			# Delete it
-			o.delete(changes={'user': sUserID})
+			o.delete(changes = { 'user': sUserID })
 
 		# Delete the template and return the result
 		return Response(
-			oTemplate.delete(changes={'user': sUserID})
+			oTemplate.delete(changes = { 'user': sUserID })
 		)
 
 	def template_read(self, req: jobject) -> Response:
@@ -1159,7 +1173,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req.session, 'mouth_template', access.READ)
+		access.internal_or_verify(
+			req.session, { 'name': 'mouth_template', 'right': access.READ }
+		)
 
 		# If the ID is missing
 		if '_id' not in req.data:
@@ -1275,7 +1291,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, 'mouth_template', access.UPDATE
+			req.session, { 'name': 'mouth_template', 'right': access.UPDATE }
 		)
 
 		# Check for ID
@@ -1313,7 +1329,7 @@ class Mouth(Service):
 		# Save the record and return the result
 		try:
 			return Response(
-				oTemplate.save(changes={'user': sUserID})
+				oTemplate.save(changes = { 'user': sUserID })
 			)
 		except DuplicateException as e:
 			return Error(
@@ -1334,7 +1350,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req.session, 'mouth_content', access.READ)
+		access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.READ }
+		)
 
 		# If 'template' is missing
 		if 'template' not in req.data:
@@ -1388,8 +1406,8 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID, iRet = access.internal_or_verify(
-			req.session, 'mouth_content', access.CREATE
+		sUserID = access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.CREATE }
 		)
 
 		# Check minimum fields
@@ -1456,8 +1474,8 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID, iRet = access.internal_or_verify(
-			req.session, 'mouth_content', access.DELETE
+		sUserID = access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1493,8 +1511,8 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID, iRet = access.internal_or_verify(
-			req.session, 'mouth_content', access.UPDATE
+		sUserID = access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.UPDATE }
 		)
 
 		# If the ID is missing
@@ -1568,7 +1586,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req.session, 'mouth_content', access.READ
+			req.session, { 'name': 'mouth_content', 'right': access.READ }
 		)
 
 		# Check minimum fields
@@ -1576,7 +1594,7 @@ class Mouth(Service):
 			evaluate(req.data, [ 'template', 'locale', 'text', 'html' ])
 		except ValueError as e:
 			return Error(
-				errors.body.DATA_FIELDS, [[f, 'missing'] for f in e.args]
+				errors.body.DATA_FIELDS, [ [ f, 'missing' ] for f in e.args ]
 			)
 
 		# If the subject isn't passed
@@ -1620,7 +1638,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, 'mouth_content', access.CREATE
+			req.session, { 'name': 'mouth_content', 'right': access.CREATE }
 		)
 
 		# Check minimum fields
@@ -1662,7 +1680,7 @@ class Mouth(Service):
 
 		# Create the record
 		try:
-			oSMS.create(changes={'user': sUserID})
+			oSMS.create(changes = { 'user': sUserID })
 		except DuplicateException as e:
 			return Error(
 				errors.body.DB_DUPLICATE,
@@ -1686,8 +1704,8 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID, iRet = access.internal_or_verify(
-			req.session, 'mouth_content', access.DELETE
+		sUserID = access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1722,8 +1740,8 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		sUserID, iRet = access.internal_or_verify(
-			req.session, 'mouth_content', access.UPDATE
+		sUserID = access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.UPDATE }
 		)
 
 		# Check minimum fields
@@ -1751,7 +1769,7 @@ class Mouth(Service):
 		# Find the primary template variables
 		dTemplate = Template.get(oSMS['template'], raw = [ 'variables' ])
 
-	 	 # Check content for errors
+		# Check content for errors
 		lErrors = self._checkTemplateContent(
 			req.data,
 			[ 'content' ],
@@ -1782,7 +1800,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.internal_or_verify(req.session, 'mouth_content', access.READ)
+		access.internal_or_verify(
+			req.session, { 'name': 'mouth_content', 'right': access.READ }
+		)
 
 		# Check minimum fields
 		try: evaluate(req.data, [ 'template', 'locale', 'content' ])
@@ -1827,7 +1847,9 @@ class Mouth(Service):
 		"""
 
 		# Make sure the client has access via the session
-		access.verify(req.session, 'mouth_template', access.READ)
+		access.verify(
+			req.session, { 'name': 'mouth_template', 'right': access.READ }
+		)
 
 		# Fetch and return all templates
 		return Response(
