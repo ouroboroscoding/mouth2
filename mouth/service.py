@@ -34,7 +34,10 @@ from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 
 # Records imports
-from mouth.records import Locale, Template, TemplateEmail, TemplateSMS
+from mouth.records.locale import Locale
+from mouth.records.template import Template
+from mouth.records.template_email import TemplateEmail
+from mouth.records.template_sms import TemplateSMS
 
 # Errors
 from mouth import errors
