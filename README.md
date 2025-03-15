@@ -7,6 +7,14 @@ messages.
 Please see [LICENSE](https://github.com/ouroboroscoding/mouth2/blob/main/LICENSE)
 for further information.
 
+# Requires
+mouth2_oc requires python 3.10 or higher
+
+# Install
+```bash
+pip install mouth2_oc
+```
+
 # Documentation
 
 [RESTful](https://github.com/ouroboroscoding/mouth2/blob/main/rest.md)

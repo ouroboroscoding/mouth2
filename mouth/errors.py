@@ -10,12 +10,13 @@ __version__ = "1.0.0"
 __email__ = "chris@ouroboroscoding.com"
 __created__ = "2023-01-11"
 
+# Limit imports
 __all__ = [
-	'ATTACHMENT_DECODE', 'ATTACHMENT_STRUCTURE', 'body',
-	'TEMPLATE_CONTENT_ERROR', 'SMTP_ERROR'
+	'ATTACHMENT_DECODE', 'ATTACHMENT_STRUCTURE', 'body', 'SMTP_ERROR',
+	'TEMPLATE_CONTENT_ERROR'
 ]
 
-# Ouroboros imports
+# Import body errors at the same level
 from body import errors as body
 
 TEMPLATE_CONTENT_ERROR = 1300

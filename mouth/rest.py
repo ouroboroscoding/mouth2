@@ -14,6 +14,7 @@ __created__		= "2022-08-25"
 from body import register_services, REST
 from config import config
 import em
+from rest_mysql import Record_MySQL
 
 # Python imports
 from pprint import pformat
@@ -54,6 +55,21 @@ def run():
 	Returns:
 		None
 	"""
+
+	# Add the global prepend
+	Record_MySQL.db_prepend(config.mysql.prepend(''))
+
+	# Add the primary mysql DB
+	Record_MySQL.add_host(
+		'mouth',
+		config.mysql.hosts[config.mouth.mysql('primary')]({
+			'host': 'localhost',
+			'port': 3306,
+			'charset': 'utf8mb4',
+			'user': 'root',
+			'passwd': ''
+		})
+	)
 
 	# Init the service
 	oMouth = Mouth()

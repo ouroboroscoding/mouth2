@@ -1,31 +1,28 @@
 # coding=utf8
-""" Install
+""" Upgrade
 
-Method to install the necessary mouth tables
+Method to upgrade the necessary mouth tables
 """
 
 __author__		= "Chris Nasr"
 __copyright__	= "Ouroboros Coding Inc."
 __version__		= "1.0.0"
 __email__		= "chris@ouroboroscoding.com"
-__created__		= "2024-12-14"
+__created__		= "2025-03-14"
 
 # Ouroboros imports
 from config import config
-from upgrade import set_latest
+from upgrade_oc import upgrade as oc_upgrade
 from rest_mysql import Record_MySQL
 
 # Python imports
 from os.path import abspath, expanduser
 from pathlib import Path
 
-# Module imports
-from mouth.records import locale, template, template_email, template_sms
-
 def run() -> int:
 	"""Run
 
-	Entry point into the install process. Will installs required files, \
+	Entry point into the upgrade process. Will upgrades required files, \
 	tables, records, etc. for the service
 
 	Returns:
@@ -47,23 +44,15 @@ def run() -> int:
 		})
 	)
 
-	# Install tables
-	locale.Locale.table_create()
-	template.Template.table_create()
-	template_email.TemplateEmail.table_create()
-	template_sms.TemplateSMS.table_create()
-
 	# Get the path to the data folder
-	sData = config.brain.data('./.data')
+	sData = config.mouth.data('./.data')
 	if '~' in sData:
 		sData = expanduser(sData)
 	sData = abspath(sData)
 
-	# Store the last known upgrade version
-	set_latest(
-		sData,
-		Path(__file__).parent.resolve()
+	# Run the upgrade scripts avaialble and store the new version number
+	return oc_upgrade(
+		data_path = sData,
+		module_path = Path(__file__).parent.resolve(),
+		mode = 'module'
 	)
-
-	# Return OK
-	return 0
