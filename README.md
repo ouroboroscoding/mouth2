@@ -1,8 +1,8 @@
-# Mouth2
+# mouth2_oc
 [![pypi version](https://img.shields.io/pypi/v/mouth2-oc.svg)](https://pypi.org/project/mouth2-oc) ![Custom License](https://img.shields.io/pypi/l/mouth2-oc.svg)
 
-Body 2.0 service that handles outgoing communications like emails and sms
-messages.
+[body_oc](https://pypi.org/project/body-oc/) 2.0 service that handles outgoing
+communications like emails and sms messages.
 
 Please see [LICENSE](https://github.com/ouroboroscoding/mouth2/blob/main/LICENSE)
 for further information.
