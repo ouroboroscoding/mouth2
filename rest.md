@@ -1,6 +1,7 @@
 # Mouth
 Service for outgoing communication
 
+## Requests
 - [E-Mail](#e-mail)
 - [SMS](#sms)
 - [Locale create](#locale-create)
@@ -27,70 +28,70 @@ Service for outgoing communication
 ## E-Mail
 Sends out an email to the requested email address given the correct             locale and template, or content
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'email' 
+  'email' 
 ).then(data => {}, error => {});
 ```
 
 ## SMS
 Sends out an SMS to the requested phone number given the correct                locale and template, or content
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'sms' 
+  'sms' 
 ).then(data => {}, error => {});
 ```
 
 ## Locale create
 Creates a new locale record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'locale' 
+  'locale' 
 ).then(data => {}, error => {});
 ```
 
 ## Locale delete
 Deletes (or archives) an existing locale record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.delete(
-	'locale' 
+  'locale' 
 ).then(data => {}, error => {});
 ```
 
 ## Locale Exists
 Returns if the requested locale exists (True) or not (False)
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'locale/exists' 
+  'locale/exists' 
 ).then(data => {}, error => {});
 ```
 
 ## Locale read
 Returns an existing locale record instance or all records
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'locale' 
+  'locale' 
 ).then(data => {}, error => {});
 ```
 
 ## Locale update
 Updates an existing locale record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.update(
-	'locale' 
+  'locale' 
 ).then(data => {}, error => {});
 ```
 
@@ -98,130 +99,130 @@ mouth.update(
 Returns the list of valid locales without any requirement for being
 signed in
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'locales' 
+  'locales' 
 ).then(data => {}, error => {});
 ```
 
 ## Template create
 Creates a new template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'template' 
+  'template' 
 ).then(data => {}, error => {});
 ```
 
 ## Template delete
 Deletes an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.delete(
-	'template' 
+  'template' 
 ).then(data => {}, error => {});
 ```
 
 ## Template read
 Fetches and returns the template with the associated content records
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'template' 
+  'template' 
 ).then(data => {}, error => {});
 ```
 
 ## Template update
 Updates an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.update(
-	'template' 
+  'template' 
 ).then(data => {}, error => {});
 ```
 
 ## Template Contents read
 Returns all the content records for a single template
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'template/contents' 
+  'template/contents' 
 ).then(data => {}, error => {});
 ```
 
 ## Template Email create
 Adds an email content record to an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'template/email' 
+  'template/email' 
 ).then(data => {}, error => {});
 ```
 
 ## Template Email delete
 Deletes email content from an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.delete(
-	'template/email' 
+  'template/email' 
 ).then(data => {}, error => {});
 ```
 
 ## Template Email update
 Updated email content of an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.update(
-	'template/email' 
+  'template/email' 
 ).then(data => {}, error => {});
 ```
 
 ## Template Email Generate create
 Generates a template from the base variable data for the purposes of            testing / validating
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'template/email/generate' 
+  'template/email/generate' 
 ).then(data => {}, error => {});
 ```
 
 ## Template SMS create
 Adds an sms content record to an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'template/sms' 
+  'template/sms' 
 ).then(data => {}, error => {});
 ```
 
 ## Template SMS delete
 Deletes sms content from an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.delete(
-	'template/sms' 
+  'template/sms' 
 ).then(data => {}, error => {});
 ```
 
 ## Template SMS update
 Updated sms content of an existing template record instance
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.update(
-	'template/sms' 
+  'template/sms' 
 ).then(data => {}, error => {});
 ```
 
@@ -229,19 +230,19 @@ mouth.update(
 Generates a template from the base variable data for the purposes of
 testing / validating
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.create(
-	'template/sms/generate' 
+  'template/sms/generate' 
 ).then(data => {}, error => {});
 ```
 
 ## Templates read
 Returns all templates in the system
 
-Using @ouroboros/mouth
 ```javascript
+import mouth from '@ouroboros/mouth';
 mouth.read(
-	'templates' 
+  'templates' 
 ).then(data => {}, error => {});
 ```
