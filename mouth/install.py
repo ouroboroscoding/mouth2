@@ -12,7 +12,7 @@ __created__		= "2024-12-14"
 
 # Ouroboros imports
 from config import config
-from upgrade import set_latest
+from upgrade_oc import set_latest
 from rest_mysql import Record_MySQL
 
 # Python imports
