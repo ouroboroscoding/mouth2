@@ -42,7 +42,7 @@ class TemplateSMS(Record):
 					'_created', '_updated', 'template', 'locale', 'content'
 				],
 				'db': config.mysql.db('mouth'),
-				'host': 'mouth',
+				'host': config.mouth.mysql('records'),
 				'indexes': {
 					'ui_template_locale': { 'unique': [ 'template', 'locale' ] }
 				},

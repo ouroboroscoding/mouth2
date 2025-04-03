@@ -59,18 +59,6 @@ def run():
 	# Add the global prepend
 	Record_MySQL.db_prepend(config.mysql.prepend(''))
 
-	# Add the primary mysql DB
-	Record_MySQL.add_host(
-		'mouth',
-		config.mysql.hosts[config.mouth.mysql('primary')]({
-			'host': 'localhost',
-			'port': 3306,
-			'charset': 'utf8mb4',
-			'user': 'root',
-			'passwd': ''
-		})
-	)
-
 	# Init the service
 	oMouth = Mouth()
 

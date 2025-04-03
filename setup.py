@@ -5,13 +5,12 @@ with open('README.md', 'r') as oF:
 
 setup(
 	name='mouth2_oc',
-	version='2.1.2',
+	version='2.1.3',
 	description='Mouth contains a service to run outgoing communications like email and sms messages',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
-	url='https://ouroboroscoding.com/body/mouth2',
 	project_urls={
-		'Documentation': 'https://ouroboroscoding.com/body/mouth2',
+		'Documentation': 'https://github.com/ouroboroscoding/mouth2',
 		'Source': 'https://github.com/ouroboroscoding/mouth2',
 		'Tracker': 'https://github.com/ouroboroscoding/mouth2/issues'
 	},
@@ -33,7 +32,7 @@ setup(
 		'define-oc>=1.0.5,<1.1',
 		'email-smtp>=1.0.1,<1.1',
 		'namedredis>=1.0.2,<1.1',
-		'rest_mysql>=1.2.0,<1.3',
+		'rest_mysql>=1.2.1,<1.3',
 		'tools-oc>=1.2.5,<1.3',
 		'twilio==9.4.1',
 		'undefined-oc>=1.0.0,<1.1',
