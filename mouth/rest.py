@@ -11,10 +11,8 @@ __email__		= "chris@ouroboroscoding.com"
 __created__		= "2022-08-25"
 
 # Ouroboros imports
-from body import register_services, REST
 from config import config
 import em
-from rest_mysql import Record_MySQL
 
 # Python imports
 from pprint import pformat
@@ -56,44 +54,7 @@ def run():
 		None
 	"""
 
-	# Add the global prepend
-	Record_MySQL.db_prepend(config.mysql.prepend(''))
-
-	# Add the primary mysql DB
-	Record_MySQL.add_host(
-		'mouth',
-		config.mysql.hosts[config.mouth.mysql('primary')]({
-			'host': 'localhost',
-			'port': 3306,
-			'charset': 'utf8mb4',
-			'user': 'root',
-			'passwd': ''
-		})
-	)
-
-	# Init the service
-	oMouth = Mouth()
-
-	# Register the services
-	oRest = register_services({ 'mouth': oMouth })
-
-	# Get config
-	dMouth = oRest['mouth']
-
-	# Create the REST server using the Client instance
-	oServer = REST(
-		name = 'mouth',
-		instance = oMouth,
-		cors = config.body.rest.allowed('mouth.local'),
-		on_errors = errors,
-		verbose = config.mouth.verbose(False)
-	)
-
-	# Run the REST server
-	oServer.run(
-		host = dMouth['host'],
-		port = dMouth['port'],
-		workers = dMouth['workers'],
-		timeout = 'timeout' in dMouth and \
-			dMouth['timeout'] or 30
+	# Init and run the service as a REST server
+	Mouth().rest(
+		on_errors = errors
 	)

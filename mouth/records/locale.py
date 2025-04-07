@@ -39,7 +39,7 @@ class Locale(Record):
 				'auto_primary': False,
 				'create': [ '_archived', '_created', 'name' ],
 				'db': config.mysql.db('mouth'),
-				'host': 'mouth',
+				'host': config.mouth.mysql('records'),
 				'indexes': {
 					'ui_name': { 'unique': [ 'name' ] }
 				},
