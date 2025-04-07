@@ -78,18 +78,6 @@ class Mouth(Service):
 	}
 	"""Conditional lambdas"""
 
-	def __init__(self):
-		"""Constructor
-
-		Initialises the instance
-
-		Returns:
-			Mouth
-		"""
-
-		# Init the config
-		self.reset()
-
 	@classmethod
 	def _checkTemplateContent(cls, content, names, variables):
 		"""Check Template Content
