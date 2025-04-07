@@ -43,7 +43,7 @@ class TemplateEmail(Record):
 					'text', 'html'
 				],
 				'db': config.mysql.db('mouth'),
-				'host': 'mouth',
+				'host': config.mouth.mysql('records'),
 				'indexes': {
 					'ui_template_locale': { 'unique': [ 'template', 'locale' ] }
 				},
