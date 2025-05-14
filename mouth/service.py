@@ -551,7 +551,7 @@ class Mouth(Service):
 		"""
 
 		# Check for internal key
-		access.internal()
+		access.internal(req)
 
 		# Make sure that at minimum, we have a to field
 		if 'to' not in req.data:
@@ -711,7 +711,7 @@ class Mouth(Service):
 		"""
 
 		# Check for internal key
-		access.internal()
+		access.internal(req)
 
 		# Make sure that at minimum, we have a to field
 		if 'to' not in req.data:
@@ -1076,7 +1076,7 @@ class Mouth(Service):
 		# Make sure the client has access via either an internal key, or via the
 		#	session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_template', 'right': access.CREATE }
+			req, { 'name': 'mouth_template', 'right': access.CREATE }
 		)
 
 		# If the name is missing
@@ -1113,7 +1113,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_template', 'right': access.DELETE }
+			req, { 'name': 'mouth_template', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1165,7 +1165,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req.session, { 'name': 'mouth_template', 'right': access.READ }
+			req, { 'name': 'mouth_template', 'right': access.READ }
 		)
 
 		# If the ID is missing
@@ -1282,7 +1282,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_template', 'right': access.UPDATE }
+			req, { 'name': 'mouth_template', 'right': access.UPDATE }
 		)
 
 		# Check for ID
@@ -1342,7 +1342,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.READ }
+			req, { 'name': 'mouth_content', 'right': access.READ }
 		)
 
 		# If 'template' is missing
@@ -1398,7 +1398,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.CREATE }
+			req, { 'name': 'mouth_content', 'right': access.CREATE }
 		)
 
 		# Check minimum fields
@@ -1466,7 +1466,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.DELETE }
+			req, { 'name': 'mouth_content', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1503,7 +1503,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.UPDATE }
+			req, { 'name': 'mouth_content', 'right': access.UPDATE }
 		)
 
 		# If the ID is missing
@@ -1577,7 +1577,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.READ }
+			req, { 'name': 'mouth_content', 'right': access.READ }
 		)
 
 		# Check minimum fields
@@ -1629,7 +1629,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.CREATE }
+			req, { 'name': 'mouth_content', 'right': access.CREATE }
 		)
 
 		# Check minimum fields
@@ -1696,7 +1696,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.DELETE }
+			req, { 'name': 'mouth_content', 'right': access.DELETE }
 		)
 
 		# If the ID is missing
@@ -1732,7 +1732,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		sUserID = access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.UPDATE }
+			req, { 'name': 'mouth_content', 'right': access.UPDATE }
 		)
 
 		# Check minimum fields
@@ -1792,7 +1792,7 @@ class Mouth(Service):
 
 		# Make sure the client has access via the session
 		access.internal_or_verify(
-			req.session, { 'name': 'mouth_content', 'right': access.READ }
+			req, { 'name': 'mouth_content', 'right': access.READ }
 		)
 
 		# Check minimum fields
