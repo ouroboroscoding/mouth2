@@ -717,9 +717,7 @@ class Mouth(Service):
 		# Fetch and store Email config
 		self._dEmail = config.email({
 			'allowed': None,
-			'errors': 'webmaster@localhost',
 			'from': 'support@localehost',
-			'method': 'direct',
 			'override': None
 		})
 
@@ -727,7 +725,6 @@ class Mouth(Service):
 		self._dSMS = config.sms({
 			'active': False,
 			'allowed': None,
-			'method': 'direct',
 			'override': None,
 			'twilio': {
 				'account_sid': '',

@@ -32,11 +32,17 @@ def run() -> int:
 		int
 	"""
 
+	# Notify
+	print('Installing tables')
+
 	# Install tables
 	locale.Locale.table_create()
 	template.Template.table_create()
 	template_email.TemplateEmail.table_create()
 	template_sms.TemplateSMS.table_create()
+
+	# Notify
+	print('Setting lastest version')
 
 	# Get the path to the data folder
 	sData = config.brain.data('./.data')
@@ -49,6 +55,9 @@ def run() -> int:
 		sData,
 		Path(__file__).parent.resolve()
 	)
+
+	# Notify
+	print('Done')
 
 	# Return OK
 	return 0
