@@ -195,7 +195,7 @@ class Mouth(Service):
 						opts['attachments'][i]['body']
 					)
 				except TypeError:
-					return Response(errors.ATTACHMENT_DECODE)
+					return Error(errors.ATTACHMENT_DECODE)
 
 		# Only send if anyone is allowed, or the to is in the allowed
 		if not self._dEmail['allowed'] or opts['to'] in self._dEmail['allowed']:
@@ -211,13 +211,13 @@ class Mouth(Service):
 
 			# If there was an error
 			if iRes != em.OK:
-				return {
+				return Response({
 					'success': False,
 					'error': '%i %s' % (iRes, em.last_error())
-				}
+				})
 
 		# Return OK
-		return { 'success': True }
+		return Response({ 'success': True })
 
 	@classmethod
 	def _generate_content(cls, content, variables):
@@ -522,25 +522,26 @@ class Mouth(Service):
 				dRes = self._oTwilio.messages.create(**dArgs)
 
 				# Return ok
-				return {
+				return Response({
 					'success': True,
 					'sid': dRes.sid
-				}
+				})
 
 			# Catch any Twilio exceptions
 			except TwilioRestException as e:
 
 				# Return failure
-				return {
+				return Response({
 					'success': False,
 					'error': [v for v in e.args]
-				}
+				})
 
 	def email_create(self, req: jobject) -> Response:
-		"""E-Mail
+		"""E-Mail create
 
-		Sends out an email to the requested email address given the correct \
-		locale and template, or content
+		Sends out an email to the requested email address given the correct
+		locale and template, or content. This request can only be called
+		wrapped in an internal key.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -548,6 +549,59 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST email
+
+		Example:
+			```python
+			from body import create
+			from brain.helpers import access
+
+			create('mouth', 'email', access.generate_key({ 'data': {
+			  'to': 'chris@somedomain.com',
+			  'template': {
+			    'name': 'setup',
+			    'locale': 'en-US',
+			    'variables': {
+			      'name': 'Chris',
+			      'key': '123456',
+			      'other': '...'
+			    }
+			  }
+			} }))
+			```
+
+		Data:
+			to, string, no, The address to send the email to
+			attachments, array, yes, The optional list of files to attach to the email
+			attachments[].body, base64, no, The body of the attachment, required for each attachment
+			attachments[].filename, string, no, The filename of the attachment, required for each attachment
+			content, object, yes, The raw content to send, required if not using `template`
+			content.subject, string, no, The subject if sending raw content
+			content.text, string, yes, The text/plain content of the email, one of this or `content.html` must be set
+			content.html, string, yes, The text/html content of the email, one of this or `content.text` must be set
+			template, object, yes, The template to send, required if not using `content`
+			template._id, string, yes, The ID of the template, required if `template.name` is not passed
+			template.name, string, yes, The name of the template, required if `template._id` is not passed
+			template.locale, string, no, The locale used to generate the template
+			template.variables, object, no, The variables required for the template
+
+		Response:
+			success, bool, The result of sending the email via SMTP
+			error, string, Only passed if success is `false`
+
+		Response Example:
+			{
+			  "data": {
+			    "success": true
+			  }
+			}
+
+		Error:
+			1001, DATA_FIELDS, Data sent to the request is missing or invalid
+			1100, DB_NO_RECORD, Failed to find the template by name or locale
+			1203, INTERNAL_KEY, Failed to find or decode the internal key
 		"""
 
 		# Check for internal key
@@ -649,9 +703,7 @@ class Mouth(Service):
 		dEmail['html'] = dContent['html']
 
 		# Send the email and return the response
-		return Response(
-			self._email(dEmail)
-		)
+		return self._email(dEmail)
 
 	def reset(self):
 		"""Reset
@@ -665,9 +717,7 @@ class Mouth(Service):
 		# Fetch and store Email config
 		self._dEmail = config.email({
 			'allowed': None,
-			'errors': 'webmaster@localhost',
 			'from': 'support@localehost',
-			'method': 'direct',
 			'override': None
 		})
 
@@ -675,7 +725,6 @@ class Mouth(Service):
 		self._dSMS = config.sms({
 			'active': False,
 			'allowed': None,
-			'method': 'direct',
 			'override': None,
 			'twilio': {
 				'account_sid': '',
@@ -697,10 +746,11 @@ class Mouth(Service):
 		return self
 
 	def sms_create(self, req: jobject) -> Response:
-		"""SMS
+		"""SMS create
 
-		Sends out an SMS to the requested phone number given the correct \
-		locale and template, or content
+		Sends out an SMS to the requested phone number given the correct locale
+		and template, or content. This request can only be called wrapped in an
+		internal key.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -708,6 +758,58 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST sms
+
+		Example:
+			```python
+			from body import create
+			from brain.helpers import access
+
+			create('mouth', 'sms', access.generate_key({ 'data': {
+			  'to': '+15145551289',
+			  'template': {
+			    'name': 'setup',
+			    'locale': 'en-US',
+			    'variables': {
+			      'name': 'Chris',
+			      'key': '123456',
+			      'other': '...'
+			    }
+			  }
+			} }))
+			```
+
+		Data:
+			to, string, no, The phone number to send the SMS to
+			content, string, yes, The raw content to send, required if not using `template`
+			template, object, yes, The template to send, required if not using `content`
+			template._id, string, yes, The ID of the template, required if `template.name` is not passed
+			template.name, string, yes, The name of the template, required if `template._id` is not passed
+			template.locale, string, no, The locale used to generate the template
+			template.variables, object, no, The variables required for the template
+
+		Data Example:
+
+
+		Response:
+			success, bool, The result of sending the email via SMTP,
+			sid, string, The ID of the sms, only passed if success is `true`
+			error, string, Only passed if success is `false`
+
+		Response Example:
+			{
+			  "data": {
+			    "success": true,
+			    "sid": "7d2c3cac52c711f0a922236bb031e5e7"
+			  }
+			}
+
+		Error:
+			1001, DATA_FIELDS, Data sent to the request is missing or invalid
+			1100, DB_NO_RECORD, Failed to find the template by name or locale
+			1203, INTERNAL_KEY, Failed to find or decode the internal key
 		"""
 
 		# Check for internal key
@@ -793,17 +895,15 @@ class Mouth(Service):
 			return Error(errors.body.DATA_FIELDS, [ [ 'content', 'missing' ] ])
 
 		# Send the sms and return the response
-		return Response(
-			self._sms({
-				'to': req.data.to,
-				'content': sContent
-			})
-		)
+		return self._sms({
+			'to': req.data.to,
+			'content': sContent
+		})
 
 	def locale_create(self, req: jobject) -> Response:
 		"""Locale create
 
-		Creates a new locale record instance
+		Creates a new Locale record instance in the system.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -811,6 +911,30 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST locale
+
+		Data:
+			_id, string, no, The ID of the locale in the format [a-z]{2}-[A-Z]{2}, i.e. en-US, fr-CA, sp-ES
+			name, string, no, The name of the locale to identify it
+
+		Data Example:
+			{
+			  "_id": "en-CA",
+			  "name": "English (Canada)"
+			}
+
+		Response:
+			`true` on success, else an error.
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to create a locale
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1101, DB_DUPLICATE, The ID or name has already been used
 		"""
 
 		# Make sure the client has access via the session
@@ -836,7 +960,7 @@ class Mouth(Service):
 	def locale_delete(self, req: jobject) -> Response:
 		"""Locale delete
 
-		Deletes (or archives) an existing locale record instance
+		Deletes (or archives) an existing locale record instance.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -844,6 +968,30 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			DELETE locale
+
+		Data:
+			_id, string, no, The ID of the locale to delete
+			archive, bool, yes, Set to true to archive the locale instead of deleting it
+
+		Data Example:
+			{
+			  "_id": "en-CA"
+			}
+
+		Response:
+			`true` | `false` on DB success, else an error code
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to delete a locale
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The request template does not exist
+			1105, DB_KEY_BEING_USED, The template can't be deleted due to existing child locale templates
 		"""
 
 		# Make sure the client has access via the session
@@ -853,7 +1001,7 @@ class Mouth(Service):
 
 		# Make sure we have an ID
 		if '_id' not in req.data:
-			return Error(errors.body.DATA_FIELDS, [['_id', 'missing']])
+			return Error(errors.body.DATA_FIELDS, [ [ '_id', 'missing' ] ])
 
 		# Look for the instance
 		oLocale = Locale.get(req.data._id)
@@ -892,9 +1040,9 @@ class Mouth(Service):
 		)
 
 	def locale_exists_read(self, req: jobject) -> Response:
-		"""Locale Exists
+		"""Locale Exists read
 
-		Returns if the requested locale exists (True) or not (False)
+		Returns true if one or all locales exists.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -902,6 +1050,24 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET locale/exists
+
+		Data:
+			_id, str | str[], no, The ID(s) of the locale(s) to check for
+
+		Data Example:
+			{ "_id": "en-CA" }
+
+		Response:
+			`true` if the locale(s) exist, else, `false`
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1001, DATA_FIELDS, Missing or invalid data passed
 		"""
 
 		# If the ID is missing
@@ -931,7 +1097,7 @@ class Mouth(Service):
 	def locale_read(self, req: jobject) -> Response:
 		"""Locale read
 
-		Returns an existing locale record instance or all records
+		Returns an existing locale record, all active locales, or all locales.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -939,6 +1105,33 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET locale
+
+		Data:
+			_id, string, yes, The ID of the specific locale to get
+			archived, bool, yes, Set to true to return all locales instead of just the active (non-archived) ones
+
+		Data Example:
+			{ "_id": "en-CA" }
+
+		Response:
+			One or more locale objects
+
+		Response Example:
+			{
+			  "data": {
+			    "_id": "en-CA",
+			    "_archived": false,
+			    "_created": 1750969986,
+			    "name": "English (Canada)",
+			  }
+			}
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to read locales
+			1100, DB_NO_RECORD, The specific locale requested does not exist
 		"""
 
 		# Make sure the client has access via the session
@@ -980,7 +1173,8 @@ class Mouth(Service):
 	def locale_update(self, req: jobject) -> Response:
 		"""Locale update
 
-		Updates an existing locale record instance
+		Updates an existing locale record instance, though technically the only
+		field that can be updated is the name.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -988,6 +1182,32 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			PUT locale
+
+		Data:
+			_id, string, no, The ID of the locale to update
+			name, string, no, The new name of the locale
+
+		Data Example:
+			{
+			  "_id": "en-CA",
+			  "name": "Canadian / English"
+			}
+
+		Response:
+			`true` on success, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to update locales
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID request doesn't exist
+			1101, DB_DUPLICATE, The name conflicts with another record
+			1106, DB_ARCHIVED, The record exists but is archived
 		"""
 
 		# Make sure the client has access via the session
@@ -1033,7 +1253,7 @@ class Mouth(Service):
 		"""Locales read
 
 		Returns the list of valid locales without any requirement for being
-		signed in
+		signed in.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1041,29 +1261,38 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET locales
+
+		Data:
+			archived, bool, yes, Optionally set this to `true` to include archived locales
+
+		Response:
+			_id, string, The ID of the locale
+			name, string, The name of the locale
+
+		Response Example:
+			{
+			  "data": [ {
+			    "_id": "en-CA",
+			    "name": "Canadian / English"
+			  } ]
+			}
 		"""
 
-		# If we have data, and we have archived, and it's true
-		bArchived = 'data' in req and \
-					'archived' in req.data and \
-					req.data.archived
-
-		# If we want to include archived data or not
-		filter = not bArchived and {'_archived': False} or None
-
-		# Get and return all locales as raw data
+		# Get and return the ID and name of all active locales as a name ordered
+		#	list
 		return Response(
-			Locale.get(
-				filter=filter,
-				raw = ['_id', 'name'],
-	 	 		orderby='name'
-			)
+			Locale.filter({
+				'_archived': False
+			}, raw = [ '_id', 'name' ], orderby = 'name')
 		)
 
 	def template_create(self, req: jobject) -> Response:
 		"""Template create
 
-		Creates a new template record instance
+		Creates a new Template record instance in the DB.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1071,6 +1300,34 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST template
+
+		Data:
+			name, string, no, The name of the new Template
+			variables, object, no, A key / example store of the acceptable variables for the template
+
+		Data Example:
+			{
+			  "name": "forgot password",
+			  "variables": {
+			    "email": "first.last@test.com",
+			    "name": "First Last",
+			    "url": "https://test.com/forgot/reset/a247e"
+			  }
+			}
+
+		Response:
+			Returns the new trimmed UUID of the Template on success, else an error
+
+		Response Example:
+			{ "data": "3369bc9c536f11f086f7c1bd71fea541" }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to create a Template
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1101, DB_DUPLICATE, The name conflicts with an existing Template
 		"""
 
 		# Make sure the client has access via either an internal key, or via the
@@ -1101,7 +1358,9 @@ class Mouth(Service):
 	def template_delete(self, req: jobject) -> Response:
 		"""Template delete
 
-		Deletes an existing template record instance
+		Deletes an existing template record instance and all locale instances
+		associated with it. Be very careful doing this, as this service has no
+		way of knowing what other services require templates.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1109,6 +1368,26 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			DELETE template
+
+		Data:
+			_id, string, no, The ID of the template to delete
+
+		Data Example:
+			{ "_id": "3369bc9c536f11f086f7c1bd71fea541" }
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to delete Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested doesn't exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1118,7 +1397,7 @@ class Mouth(Service):
 
 		# If the ID is missing
 		if '_id' not in req.data:
-			return Error(errors.body.DATA_FIELDS, [['_id', 'missing']])
+			return Error(errors.body.DATA_FIELDS, [ [ '_id', 'missing' ] ])
 
 		# Find the record
 		oTemplate = Template.get(req.data._id)
@@ -1161,6 +1440,60 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET template
+
+		Data:
+			_id, string, no, The ID of the Template to fetch
+
+		Data Example:
+			{ "_id": "3369bc9c536f11f086f7c1bd71fea541" }
+
+		Response:
+			_id, string, The ID of the Template
+			_created, timestamp, The second in time the Template was created
+			_updated, timestamp, The second in time the Template was last updated
+			name, string, The name of the Template
+			variables, object, The key / example values available for the Template
+			contents, array, The list of locale content sub-Template objects available for the Template (See individual types for an idea of the expected data)
+			contents[]._id, string, The ID of the locale sub-Template
+			contents[]._created, timestamp, The second in time the sub-Template was created
+			contents[]._updated, timestamp, The second in time the sub-Template was last updated
+			contents[].template, string, The ID you requested originally
+			contents[].locale, string, The locale associated with the sub-Template
+			contents[].type, string, The type of sub-Template
+
+		Response Example:
+			{
+			  "data": {
+			    "_id": "3369bc9c536f11f086f7c1bd71fea541",
+			    "_created": 1751041150,
+			    "_updated": 1751041150,
+			    "name": "forgot password",
+			    "variables": {
+			      "email": "first.last@test.com",
+			      "name": "First Last",
+			      "url": "https://test.com/forgot/reset/a247e"
+			    },
+			    "contents": [ {
+			      "_id": "71539ff5537411f086f7c1bd71fea541",
+			      "_created": 1751041296,
+			      "_updated": 1751041296,
+			      "template": "3369bc9c536f11f086f7c1bd71fea541",
+			      "locale": "en-CA",
+			      "subject": "Password Reset Request",
+			      "text": "Hi {name}, click this {url}",
+			      "html": "<p>Hi {name}, <a href=\\"{url}\\">click here</a> to reset your password</p>",
+			      "type": "email"
+			    } ]
+			  }
+			}
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to read Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested does not exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1170,7 +1503,7 @@ class Mouth(Service):
 
 		# If the ID is missing
 		if '_id' not in req.data:
-			return Error(errors.body.DATA_FIELDS, [['_id', 'missing']])
+			return Error(errors.body.DATA_FIELDS, [ [ '_id', 'missing' ] ])
 
 		# Find the record
 		dTemplate = Template.get(req.data._id, raw = True)
@@ -1270,7 +1603,8 @@ class Mouth(Service):
 	def template_update(self, req: jobject) -> Response:
 		"""Template update
 
-		Updates an existing template record instance
+		Updates an existing Template record instance. In the example we are
+		removing the "email" variable since it is not being used.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1278,6 +1612,36 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			PUT template
+
+		Data:
+			_id, string, no, The ID of the Template to update
+			name, string, yes, The name of the new Template
+			variables, object, yes, A key / example store of the acceptable variables for the template
+
+		Data Example:
+			{
+			  "_id": "",
+			  "name": "forgot password",
+			  "variables": {
+			    "name": "First Last",
+			    "url": "https://test.com/forgot/reset/a247e"
+			  }
+			}
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to update Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested does not exist
+			1101, DB_DUPLICATE, The new name conflicts with an existing Template
 		"""
 
 		# Make sure the client has access via the session
@@ -1330,7 +1694,10 @@ class Mouth(Service):
 	def template_contents_read(self, req: jobject) -> Response:
 		"""Template Contents read
 
-		Returns all the content records for a single template
+		Returns all the content records for a single template. The response
+		variables listed below should be consider only the list of mandatory
+		variables, as each Template type will contain it's own variables which
+		will be included alongside the listed ones.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1338,6 +1705,43 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET template/contents
+
+		Data:
+			_id, string, no, The ID of the template to find contents for
+
+		Data Example:
+			{ "_id": "3369bc9c536f11f086f7c1bd71fea541" }
+
+		Response:
+			[]._id, string, The ID of the locale sub-Template
+			[]._created, timestamp, The second in time the sub-Template was created
+			[]._updated, timestamp, The second in time the sub-Template was last updated
+			[].template, string, The ID you requested originally
+			[].locale, string, The locale associated with the sub-Template
+			[].type, string, The type of sub-Template
+
+		Response Example:
+			{
+			  "data": [ {
+			    "_id": "71539ff5537411f086f7c1bd71fea541",
+			    "_created": 1751041296,
+			    "_updated": 1751041296,
+			    "template": "3369bc9c536f11f086f7c1bd71fea541",
+			    "locale": "en-CA",
+			    "subject": "Password Reset Request",
+			    "text": "Hi {name}, click this {url}",
+			    "html": "<p>Hi {name}, <a href=\\"{url}\\">click here</a> to reset your password</p>",
+			    "type": "email"
+			  } ]
+			}
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to read Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested does not exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1386,7 +1790,8 @@ class Mouth(Service):
 	def template_email_create(self, req: jobject) -> Response:
 		"""Template Email create
 
-		Adds an email content record to an existing template record instance
+		Adds an email content record to an existing template record instance by
+		locale.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1394,6 +1799,38 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST template/email
+
+		Data:
+			template, string, no, The ID of the Template to add to
+			locale, string, no, The locale associated
+			subject, string, no, The subject of the email
+			text, string, no, The text/plain version of the email
+			html, string, no, The text/html version of the email
+
+		Data Example:
+			{
+			  "template": "3369bc9c536f11f086f7c1bd71fea541",
+			  "locale": "en-CA",
+			  "subject": "Password Reset Request",
+			  "text": "Hi {name}, click this {url}",
+			  "html": "<p>Hi {name}, <a href=\\"{url}\\">click here</a> to reset your password</p>"
+			}
+
+		Response:
+			Returns the ID of the new email content record, else an error
+
+		Response Example:
+			{ "data": "71539ff5537411f086f7c1bd71fea541" }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to create sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The template or locale requested does not exist
+			1101, DB_DUPLICATE, The locale is already used in the template
+			1300, TEMPLATE_CONTENT_ERROR, The template has errors related to variables or imports
 		"""
 
 		# Make sure the client has access via the session
@@ -1454,7 +1891,7 @@ class Mouth(Service):
 	def template_email_delete(self, req: jobject) -> Response:
 		"""Template Email delete
 
-		Deletes email content from an existing template record instance
+		Deletes email content from an existing template record instance.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1462,6 +1899,26 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			DELETE template/email
+
+		Data:
+			_id, string, no, The ID of the email content record to delete
+
+		Data Example:
+			{ "_id": "71539ff5537411f086f7c1bd71fea541" }
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to delete sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested doesn't exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1491,7 +1948,7 @@ class Mouth(Service):
 	def template_email_update(self, req: jobject) -> Response:
 		"""Template Email update
 
-		Updated email content of an existing template record instance
+		Updated email content of an existing template record instance by locale.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1499,6 +1956,33 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			PUT template/email
+
+		Data:
+			_id, string, no, The ID of the sub-Template to update
+			subject, string, yes, The subject of the email
+			text, string, yes, The text/plain version of the email
+			html, string, yes, The text/html version of the email
+
+		Data Example:
+			{
+			  "_id": "71539ff5537411f086f7c1bd71fea541",
+			  "subject": "Password forgot request"
+			}
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to update Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested does not exist
+			1300, TEMPLATE_CONTENT_ERROR, The template has errors related to variables or imports
 		"""
 
 		# Make sure the client has access via the session
@@ -1564,8 +2048,8 @@ class Mouth(Service):
 	def template_email_generate_create(self, req: jobject) -> Response:
 		"""Template Email Generate create
 
-		Generates a template from the base variable data for the purposes of \
-		testing / validating
+		Generates and returns a template from the base variable data for the
+		purposes of testing and / or validating.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1573,6 +2057,44 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST template/email/generate
+
+		Data:
+			template, string, no, The ID of the template to generate
+			locale, string, no, The locale to generate the template in
+			subject, string, yes, The subject of the email to test
+			text, string, no, The text/plain version of the email to test
+			html, string, no, The text/html version of the email to test
+
+		Data Example:
+			{
+			  "template": "3369bc9c536f11f086f7c1bd71fea541",
+			  "locale": "en-CA",
+			  "subject": "Password Reset Request",
+			  "text": "Hi {name}, click this {url}",
+			  "html": "<p>Hi {name}, <a href=\\"{url}\\">click here</a> to reset your password</p>"
+			}
+
+		Response:
+			subject, str, The generated subject
+			text, str, The generated text/plain
+			html, str, The generated text/html
+
+		Response Example:
+			{
+			  "data": {
+			    "subject": "Forgot Password Request",
+			    "text": "Hi First Last, click this https://test.com/forgot/reset/a247e",
+			    "html": "<p>Hi First Last, <a href=\\"https://test.com/forgot/reset/a247e\\">click here</a> to reset your password</p>"
+			  }
+			}
+
+		Error:
+			1000, RIGHTS, The user lacks rights to read sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The template or locale does not exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1625,6 +2147,34 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST template/sms
+
+		Data:
+			template, string, no, The ID of the Template to add to
+			locale, string, no, The locale associated
+			content, string, no, The content of the sms
+
+		Data Example:
+			{
+			  "template": "f63b6cba538011f086f7c1bd71fea541",
+			  "locale": "en-US",
+			  "content": "You have {count} new notifications!"
+			}
+
+		Response:
+			Returns the ID of the new sms content record, else an error
+
+		Response Example:
+			{ "data": "00114302538111f086f7c1bd71fea541" }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to create sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The template or locale requested does not exist
+			1101, DB_DUPLICATE, The locale is already used in the template
+			1300, TEMPLATE_CONTENT_ERROR, The template has errors related to variables or imports
 		"""
 
 		# Make sure the client has access via the session
@@ -1692,6 +2242,26 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			DELETE template/sms
+
+		Data:
+			_id, string, no, The ID of the sms content record to delete
+
+		Data Example:
+			{ "_id": "00114302538111f086f7c1bd71fea541" }
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to delete sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested doesn't exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1728,6 +2298,31 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			PUT template/sms
+
+		Data:
+			_id, string, no, The ID of the sub-Template to update
+			content, string, yes, The content of the sms
+
+		Data Example:
+			{
+			  "_id": "00114302538111f086f7c1bd71fea541",
+			  "content": "You have {count} notification(s) waiting for you!"
+			}
+
+		Response:
+			Returns `true` | `false` on DB result, else an error
+
+		Response Example:
+			{ "data": true }
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to update Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The ID requested does not exist
+			1300, TEMPLATE_CONTENT_ERROR, The template has errors related to variables or imports
 		"""
 
 		# Make sure the client has access via the session
@@ -1779,8 +2374,8 @@ class Mouth(Service):
 	def template_sms_generate_create(self, req: jobject) -> Response:
 		"""Template SMS Generate create
 
-		Generates a template from the base variable data for the purposes of
-		testing / validating
+		Generates and returns a template from the base variable data for the
+		purposes of testing and / or validating.
 
 		Arguments:
 			req (jobject): The request details, which can include 'data', \
@@ -1788,6 +2383,32 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			POST template/sms/generate
+
+		Data:
+			template, string, no, The ID of the template to generate
+			locale, string, no, The locale to generate the template in
+			content, string, yes, The content of the sms to test
+
+		Data Example:
+			{
+			  "template": "00114302538111f086f7c1bd71fea541",
+			  "locale": "en-US",
+			  "content": "You have {count} new notifications!"
+			}
+
+		Response:
+			A string of the generated content
+
+		Response Example:
+			{ "data": "You have 5 new notifications!" }
+
+		Error:
+			1000, RIGHTS, The user lacks rights to read sub-Templates
+			1001, DATA_FIELDS, Missing or invalid data passed
+			1100, DB_NO_RECORD, The template or locale does not exist
 		"""
 
 		# Make sure the client has access via the session
@@ -1835,6 +2456,30 @@ class Mouth(Service):
 
 		Returns:
 			Response
+
+		Noun:
+			GET templates
+
+		Response:
+			Returns an array of Template objects ordered by name
+
+		Response Example:
+			{
+			  "data": [ {
+			    "_id": "3369bc9c536f11f086f7c1bd71fea541",
+			    "_created": 1751041150,
+			    "_updated": 1751041150,
+			    "name": "forgot password",
+			    "variables": {
+			      "email": "first.last@test.com",
+			      "name": "First Last",
+			      "url": "https://test.com/forgot/reset/a247e"
+			    }
+			  } ]
+			}
+
+		Error:
+			1000, RIGHTS, The user lacks the rights to read Templates
 		"""
 
 		# Make sure the client has access via the session
