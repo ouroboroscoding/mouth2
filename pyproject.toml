@@ -4,7 +4,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'mouth2_oc'
-version = '2.2.1'
+version = '2.2.2'
 description = 'Mouth contains a service to run outgoing communications like email and sms messages'
 authors = [
     {name = 'Chris Nasr - Ouroboros Coding Inc.', email = 'chris@ouroboroscoding.com'}
