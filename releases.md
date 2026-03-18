@@ -1,5 +1,9 @@
 # mouth2_oc releases
 
+## 2.2.2
+- Added upgrade script to handle going directly from 1.0.0 to 2.2.2 since code has changed too much for the old 1.0.0 to 2.1.0 script no longer worked.
+- Also added a 2.1.0 to 2.2.2 script to bridge the gap and make upgrades still work in the future for those already ad 2.1.0.
+
 ## 2.2.1
 - Fixed bug in `POST email` where errors were not returned correctly, potentially causing issues in clients.
 
